@@ -1,0 +1,23 @@
+# Build outputs
+build/
+*.apk
+*.aar
+*.dex
+*.class
+
+# Gradle
+.gradle/
+local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+sources.txt
+*.log
