@@ -15,10 +15,12 @@ import java.util.Map;
  * <p>使用示例：
  * <pre>
  *   SensorValue v = Sensor.speed();
- *   // v.str = "60 km/h"
+ *   v.format();          // "60 km/h"
+ *   v.format(1, null);   // "60 km/h"
+ *   v.format(-1, "km/h");// "60km/h"
  *
  *   SensorValue g = Sensor.gear();
- *   // g.str = "D"
+ *   g.format();          // "D"
  * </pre>
  *
  * <p>{@link #ALL} 暴露全部字段元数据，便于 UI 枚举展示。
@@ -65,6 +67,12 @@ public final class Sensor {
 
     private static final Map<Integer, String> openCloseMap = map(
             0, "关闭", 1, "打开");
+
+    private static final Map<Integer, String> closeOpenMap = map(
+            1, "关闭", 2, "打开");
+
+    private static final Map<Integer, String> fuelConUnitMap = map(
+            0, "未知", 1, "L/100km", 2, "km/L", 3, "MPG", 4, "L/h");
 
     private static final Map<Integer, String> lockUnlockMap = map(
             1, "解锁", 2, "上锁");
@@ -207,6 +215,11 @@ public final class Sensor {
     private static final Field ACC_CRUISE_STATE = new Field("accCruiseState", 1007, 694157362, 5, Decoder.INT_ENUM, 1.0, "ACC巡航状态", "动力与速度", accCruiseMap, "");
     private static final Field ACC_CRUISING_SPEED = new Field("accCruisingSpeed", 1007, 710934536, 5, Decoder.INT_RAW, 1.0, "ACC巡航车速", "动力与速度", null, "km/h");
     private static final Field ACC_SPEED = new Field("accSpeed", 1007, 597688328, 5, Decoder.INT_RAW, 1.0, "ACC设定速度", "动力与速度", null, "km/h");
+    private static final Field ENGINE_RPM = new Field("engineRpm", 1012, 282066952, 5, Decoder.INT_RAW, 1.0, "发动机转速", "动力与速度", null, "rpm");
+    private static final Field ENGINE_RPM2 = new Field("engineRpm2", 1012, 339738642, 5, Decoder.INT_RAW, 1.0, "发动机转速2", "动力与速度", null, "rpm");
+    private static final Field FRONT_MOTOR_RPM = new Field("frontMotorRpm", 1012, 1141899272, 5, Decoder.INT_RAW, 1.0, "前电机转速", "动力与速度", null, "rpm");
+    private static final Field REAR_MOTOR_RPM = new Field("rearMotorRpm", 1012, 621805576, 5, Decoder.INT_RAW, 1.0, "后电机转速", "动力与速度", null, "rpm");
+    private static final Field REAR_MOTOR_RPM2 = new Field("rearMotorRpm2", 1012, 621805592, 5, Decoder.INT_RAW, 1.0, "后电机转速2", "动力与速度", null, "rpm");
 
     // --- 能源与续航 ---
     private static final Field FUEL_LEVEL = new Field("fuelLevel", 1014, 1246785600, 5, Decoder.INT_PERCENT, 1.0, "油量", "能源与续航", null, "");
@@ -220,12 +233,12 @@ public final class Sensor {
     private static final Field ELEC_CON_PER_100KM = new Field("elecConPer100km", 1014, 1032863794, 7, Decoder.FLOAT_KWH, 1.0, "百公里电耗", "能源与续航", null, "kWh/100km");
     private static final Field FUEL_CON_PER_100KM = new Field("fuelConPer100km", 1014, 1032863782, 7, Decoder.FLOAT_KWH, 1.0, "百公里油耗", "能源与续航", null, "L/100km");
     private static final Field INSTANT_FUEL_CON = new Field("instantFuelCon", 1014, 1246760996, 7, Decoder.FLOAT_KWH, 1.0, "瞬时油耗", "能源与续航", null, "");
-    private static final Field INSTANT_FUEL_CON_UNIT = new Field("instantFuelConUnit", 1007, 1246761027, 5, Decoder.INT_ENUM, 1.0, "瞬时油耗单位", "能源与续航", null, "");
+    private static final Field INSTANT_FUEL_CON_UNIT = new Field("instantFuelConUnit", 1007, 1246761027, 5, Decoder.INT_ENUM, 1.0, "瞬时油耗单位", "能源与续航", fuelConUnitMap, "");
     private static final Field ELEC_DRIVING_RANGE_KM = new Field("elecDrivingRangeKm", 1014, 1246765118, 5, Decoder.INT_RAW, 1.0, "纯电续航里程", "能源与续航", null, "km");
     private static final Field FUEL_DRIVING_RANGE_KM = new Field("fuelDrivingRangeKm", 1014, 1246773304, 5, Decoder.INT_RAW, 1.0, "燃油续航里程", "能源与续航", null, "km");
     private static final Field CHARGE_GUN_STATE = new Field("chargeGunState", 1009, 876609586, 5, Decoder.INT_ENUM, 1.0, "充电枪状态", "能源与续航", chargeGunMap, "");
-    private static final Field CHARGING_CAP_COVER = new Field("chargingCapCover", 1009, 1081081898, 5, Decoder.INT_ENUM, 1.0, "充电口盖", "能源与续航", openCloseMap, "");
-    private static final Field CHARGING_CAP_LEGACY = new Field("chargingCapLegacy", 1009, 603979834, 5, Decoder.INT_ENUM, 1.0, "充电口盖(旧)", "能源与续航", null, "");
+    private static final Field CHARGING_CAP_COVER = new Field("chargingCapCover", 1009, 1081081898, 5, Decoder.INT_ENUM, 1.0, "充电口盖", "能源与续航", closeOpenMap, "");
+    private static final Field CHARGING_CAP_LEGACY = new Field("chargingCapLegacy", 1009, 603979834, 5, Decoder.INT_ENUM, 1.0, "充电口盖(旧)", "能源与续航", openCloseMap, "");
     private static final Field CHARGING_STATUS = new Field("chargingStatus", 1009, 1231032336, 5, Decoder.INT_ENUM, 1.0, "充电状态", "能源与续航", chargeStatusMap, "");
 
     // --- 里程信息 ---
@@ -312,12 +325,13 @@ public final class Sensor {
 
     // ===================== 全部字段 =====================
 
-    /** 全部 97 个字段，按定义顺序排列。 */
+    /** 全部 102 个字段，按定义顺序排列。 */
     public static final List<Field> ALL = Collections.unmodifiableList(Arrays.asList(
             // 动力与速度
             SPEED, GEAR, POWER, ACCEL_PEDAL_DEPTH, BRAKE_PEDAL_DEPTH,
             DRIVE_MODE, DRIVE_MODE_INDICATOR, WORK_MODE, ENERGY_STATE,
             POWER_STATE, ACC_CRUISE_STATE, ACC_CRUISING_SPEED, ACC_SPEED,
+            ENGINE_RPM, ENGINE_RPM2, FRONT_MOTOR_RPM, REAR_MOTOR_RPM, REAR_MOTOR_RPM2,
             // 能源与续航
             FUEL_LEVEL, SOC, VOLTAGE_12V, MAX_CELL_VOLTAGE, MIN_CELL_VOLTAGE,
             MAX_BAT_TEMP, MIN_BAT_TEMP, TOTAL_ELEC_CONSUMPTION,
@@ -364,35 +378,22 @@ public final class Sensor {
     private static SensorValue readField(Field f) {
         Integer raw = Vehicle.read(f.device, f.fid, f.transact);
         if (raw == null) return SensorValue.failed();
-        // For INT_ENUM: look up enum map, append raw value
-        if (f.decoder == Decoder.INT_ENUM) {
+
+        boolean isEnum = (f.decoder == Decoder.INT_ENUM);
+        String defaultUnit = f.unitSuffix.length() > 0 ? f.unitSuffix : f.decoder.getUnit();
+
+        if (isEnum) {
             if (raw == -10011 || raw == -10013 || raw == 65535 || raw == 1048575) {
-                return new SensorValue(raw, null, "无效 (raw=" + raw + ")");
+                return new SensorValue(raw, null, true, f.enumMap, defaultUnit);
             }
-            String label = f.enumMap.get(raw);
-            if (label != null) {
-                return new SensorValue(raw, (double) raw, label);
-            } else if (!f.enumMap.isEmpty()) {
-                return new SensorValue(raw, (double) raw, "未知 (raw=" + raw + ")");
-            } else {
-                return new SensorValue(raw, (double) raw, "raw=" + raw);
-            }
+            return new SensorValue(raw, (double) raw, true, f.enumMap, defaultUnit);
         }
+
         Double decoded = f.decoder.decode(raw, f.scale);
         if (decoded == null) {
-            return new SensorValue(raw, null, "无效 (raw=" + raw + ")");
+            return new SensorValue(raw, null, false, f.enumMap, defaultUnit);
         }
-        String unit = f.unitSuffix.length() > 0 ? f.unitSuffix : f.decoder.getUnit();
-        String str = unit.isEmpty() ? formatDouble(decoded) : formatDouble(decoded) + " " + unit;
-        return new SensorValue(raw, decoded, str);
-    }
-
-    private static String formatDouble(double d) {
-        double rounded = Math.floor(d * 1000) / 1000.0;
-        if (rounded == Math.floor(rounded)) {
-            return Long.toString((long) rounded);
-        }
-        return Double.toString(rounded);
+        return new SensorValue(raw, decoded, false, f.enumMap, defaultUnit);
     }
 
     // ===================== 单字段读取方法 =====================
@@ -411,6 +412,11 @@ public final class Sensor {
     public static SensorValue accCruiseState() { return readField(ACC_CRUISE_STATE); }
     public static SensorValue accCruisingSpeed() { return readField(ACC_CRUISING_SPEED); }
     public static SensorValue accSpeed() { return readField(ACC_SPEED); }
+    public static SensorValue engineRpm() { return readField(ENGINE_RPM); }
+    public static SensorValue engineRpm2() { return readField(ENGINE_RPM2); }
+    public static SensorValue frontMotorRpm() { return readField(FRONT_MOTOR_RPM); }
+    public static SensorValue rearMotorRpm() { return readField(REAR_MOTOR_RPM); }
+    public static SensorValue rearMotorRpm2() { return readField(REAR_MOTOR_RPM2); }
 
     // --- 能源与续航 ---
     public static SensorValue fuelLevel() { return readField(FUEL_LEVEL); }

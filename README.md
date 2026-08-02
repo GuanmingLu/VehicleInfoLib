@@ -75,6 +75,21 @@ Vehicle.InitResult r = Vehicle.init(context, (level, tag, msg, t) -> {
 });
 ```
 
+#### 动态加载场景（如 AutoJS）
+
+当通过 `DexClassLoader` 动态加载本库的 dex 时，自动判断 CLASSPATH 可能失败（`ProtectionDomain` 和 ClassLoader 反射均不可用）。此时应**显式传入 dex 路径**：
+
+```java
+// AutoJS / 其他动态加载宿主：显式指定 dex 路径
+String dexPath = "/data/user/0/org.autojs.autojs6/files/vehicle_infolib/classes.dex";
+Vehicle.InitResult r = Vehicle.init(context, dexPath);
+
+// 或同时传入 logger
+Vehicle.InitResult r = Vehicle.init(context, logger, dexPath);
+```
+
+显式传入后，库会直接使用该路径作为 daemon 的 CLASSPATH（必要时自动推送到 `/data/local/tmp/` 供 shell uid 读取），跳过自动判断逻辑。
+
 **前提条件**：车机已开启无线 ADB（本机 `127.0.0.1:5555` 可连）。普通 App 通过本机回环连接自身 ADB 即可获得 shell 权限的 daemon。
 
 ### 3. 读取传感器（Sensor）
@@ -86,30 +101,37 @@ import me.guanming.vehicle.infolib.SensorValue;
 SensorValue speed = Sensor.speed();
 // speed.raw   = 1115684864   (IEEE 754 位模式)
 // speed.value = 60.0
-// speed.str   = "60 km/h"
+speed.format();           // "60 km/h"  (默认单位+空格)
+speed.format(1, null);    // "60 km/h"  (最多1位小数)
+speed.format(-1, "km/h"); // "60km/h"   (自定义单位，不加空格)
+speed.format(-1, "");     // "60"       (无单位)
 
 SensorValue gear = Sensor.gear();
 // gear.raw   = 4
 // gear.value = 4.0
-// gear.str   = "D"
+gear.format();            // "D"  (枚举类型忽略小数位与单位参数)
 
 SensorValue soc = Sensor.soc();
-// soc.str = "78.5%"
+soc.format();             // "78.5 %"
 
 // 枚举全部字段元数据（便于 UI 展示）
 for (Sensor.Field f : Sensor.ALL) {
     SensorValue v = Sensor.read(f);
-    System.out.println(f.displayName + ": " + v.str);
+    System.out.println(f.displayName + ": " + v.format());
 }
 ```
 
-`SensorValue` 字段说明：
+`SensorValue` 字段与方法说明：
 
-| 字段    | 类型      | 说明                                              |
-|---------|-----------|---------------------------------------------------|
-| `raw`   | `Integer` | 原始 int 值（FLOAT 字段为 IEEE 754 位模式），`null` 表示读取失败 |
-| `value` | `Double`  | 解码后的数值，`null` 表示无效（sentinel/越界/NaN）   |
-| `str`   | `String`  | 显示字符串（含单位或枚举名）                        |
+| 字段/方法 | 类型 | 说明 |
+|-----------|------|------|
+| `raw` | `Integer` | 原始 int 值（FLOAT 字段为 IEEE 754 位模式），`null` 表示读取失败 |
+| `value` | `Double` | 解码后的数值，`null` 表示无效（sentinel/越界/NaN） |
+| `format()` | `String` | 格式化为显示字符串（默认：小数位不限，默认单位+空格） |
+| `format(maxDecimals)` | `String` | 指定最多保留几位小数（-1 不限），默认单位+空格 |
+| `format(maxDecimals, customUnit)` | `String` | 完整定制：`customUnit=null` 用默认单位+空格，`""` 无单位，其他字符串作单位不加空格 |
+
+> 枚举类型（INT_ENUM）的 `format()` 直接返回枚举标签，忽略 `maxDecimals` 和 `customUnit` 参数。
 
 ### 4. 写入控制（Control）
 
@@ -127,6 +149,32 @@ Control.windowDriverPos(50);              // 主驾窗位置 50%（无默认值�
 
 所有写入方法返回 `boolean`，`true` 表示写入成功（status ≥ 0）。**本库不对写入值做校验，也不回读，请谨慎使用控制类方法。**
 
+### 5. 执行 ADB Shell 命令
+
+init 成功后，可通过 `Vehicle.getAdb()` 获取已连接的 ADB 客户端，复用其连接执行任意 shell 命令（以 shell 权限运行）。
+
+```java
+import me.guanming.vehicle.infolib.Vehicle;
+import me.guanming.vehicle.infolib.VehicleAdbClient;
+
+// 方式 1：便捷方法（出错返回空串）
+String model = Vehicle.shell("getprop ro.product.model", 10000);
+
+// 方式 2：获取 ADB 客户端实例（可检查连接状态、执行多条命令）
+VehicleAdbClient adb = Vehicle.getAdb();
+if (adb != null) {
+    String uptime = adb.shellQuiet("cat /proc/uptime", 10000);
+    // 或抛出异常的版本
+    try {
+        String output = adb.shell("pm list packages", 15000);
+    } catch (IOException e) {
+        // 处理超时/断连
+    }
+}
+```
+
+> **注意**：`getAdb()` 返回的客户端与内部 daemon 共用同一连接，均为 shell 权限。请勿执行破坏性命令。
+
 ## API 概览
 
 ### `Vehicle`（底层入口）
@@ -134,9 +182,13 @@ Control.windowDriverPos(50);              // 主驾窗位置 50%（无默认值�
 | 方法 | 说明 |
 |------|------|
 | `Vehicle.init(Context)` | 初始化（不带 logger） |
+| `Vehicle.init(Context, String dexPath)` | 初始化（显式指定 dex 路径，动态加载场景） |
 | `Vehicle.init(Context, VehicleLogger)` | 初始化（带 logger） |
+| `Vehicle.init(Context, VehicleLogger, String dexPath)` | 初始化（带 logger + 显式 dex 路径） |
 | `Vehicle.read(dev, fid, transact)` | 读取原始 int 值（不解码） |
 | `Vehicle.write(dev, fid, value)` | 写入控制值 |
+| `Vehicle.getAdb()` | 获取 ADB 客户端（复用 init 连接，可执行任意 shell 命令） |
+| `Vehicle.shell(cmd, timeoutMs)` | 便捷方法：通过 ADB 执行 shell 命令（出错返回空串） |
 
 ### `Sensor`（97 个字段）
 
@@ -209,7 +261,7 @@ VehicleInfoLib/
 │   ├── src/main/java/me/guanming/vehicle/infolib/
 │   │   ├── Vehicle.java          # 入口：init / read / write
 │   │   ├── Sensor.java           # 97 个字段读取 + 解码
-│   │   ├── SensorValue.java      # 读取结果（raw/value/str）
+│   │   ├── SensorValue.java      # 读取结果（raw/value + format()）
 │   │   ├── Control.java          # 138 个控制动作写入
 │   │   ├── VehicleProtocol.java  # Binder 协议常量
 │   │   ├── VehicleDaemon.java    # shell 权限守护进程

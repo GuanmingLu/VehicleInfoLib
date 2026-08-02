@@ -67,6 +67,9 @@ public final class Vehicle {
     private static boolean initialized = false;
     private static final Object INIT_LOCK = new Object();
 
+    /** 显式指定的 dex 路径（动态加载场景由调用方传入，优先于自动判断） */
+    private static String explicitDexPath;
+
     /**
      * 启动车辆服务。
      *
@@ -84,7 +87,21 @@ public final class Vehicle {
      * @return 启动结果
      */
     public static InitResult init(Context context) {
-        return init(context, null);
+        return init(context, null, null);
+    }
+
+    /**
+     * 启动车辆服务（显式指定 dex 路径）。
+     *
+     * <p>动态加载场景（如 AutoJS）下，调用方明确知道 dex 文件路径，
+     * 直接传入可避免自动判断 CLASSPATH 失败的问题。
+     *
+     * @param context 任意 context（内部取 applicationContext）
+     * @param dexPath daemon 所在的 dex/jar/apk 文件路径
+     * @return 启动结果
+     */
+    public static InitResult init(Context context, String dexPath) {
+        return init(context, null, dexPath);
     }
 
     /**
@@ -95,6 +112,21 @@ public final class Vehicle {
      * @return 启动结果
      */
     public static InitResult init(Context context, VehicleLogger logger) {
+        return init(context, logger, null);
+    }
+
+    /**
+     * 启动车辆服务（带日志回调与显式 dex 路径）。
+     *
+     * <p>这是所有 init 重载的最终实现。无论是否有 logger，都保存 context。
+     * 无论是否传入 dexPath，都保存（null 表示走自动判断）。
+     *
+     * @param context 任意 context（内部取 applicationContext）
+     * @param logger  日志回调（可为 null）
+     * @param dexPath daemon 所在的 dex/jar/apk 路径（可为 null，表示自动判断）
+     * @return 启动结果
+     */
+    public static InitResult init(Context context, VehicleLogger logger, String dexPath) {
         synchronized (INIT_LOCK) {
             if (initialized && cachedBinder != null) {
                 // 已启动，立即返回
@@ -106,6 +138,10 @@ public final class Vehicle {
             // 无论是否有 logger，都保存 context
             Vehicle.appContext = context.getApplicationContext();
             Vehicle.logger = logger;
+            Vehicle.explicitDexPath = dexPath;
+            if (dexPath != null) {
+                log("I", "init with explicit dexPath: " + dexPath);
+            }
 
             // 解除隐藏 API 限制
             try {
@@ -226,6 +262,62 @@ public final class Vehicle {
     public static boolean write(Context context, int dev, int fid, int value) {
         appContext = context.getApplicationContext();
         return write(dev, fid, value);
+    }
+
+    // ===================== ADB 公共接口 =====================
+
+    /**
+     * 获取 ADB 客户端实例（复用 init 时建立的连接）。
+     *
+     * <p>若 init 已成功执行，返回的实例已连接本机 ADB，可直接执行 shell 命令。
+     * 若未调用过 init 或连接已断开，将自动尝试创建并连接。
+     *
+     * <p>使用示例：
+     * <pre>
+     *   VehicleAdbClient adb = Vehicle.getAdb();
+     *   if (adb != null) {
+     *       String model = adb.shellQuiet("getprop ro.product.model", 10000);
+     *   }
+     * </pre>
+     *
+     * @return 已连接的 ADB 客户端，连接失败返回 null
+     */
+    public static VehicleAdbClient getAdb() {
+        synchronized (INIT_LOCK) {
+            if (adb != null && adb.isConnected()) {
+                return adb;
+            }
+            // 尝试创建并连接
+            if (appContext == null) {
+                log("E", "getAdb: not initialized, call init() first");
+                return null;
+            }
+            if (adb != null) adb.close();
+            VehicleAdbKeyStore keyStore = new VehicleAdbKeyStore(appContext, logger);
+            adb = new VehicleAdbClient(keyStore.get(), logger);
+            if (!adb.connect()) {
+                log("E", "getAdb: connect failed");
+                return null;
+            }
+            return adb;
+        }
+    }
+
+    /**
+     * 便捷方法：通过 ADB 执行 shell 命令（静默模式，出错返回空串）。
+     *
+     * <p>内部复用 {@link #getAdb()} 的连接，无需单独调用 init。
+     *
+     * @param cmd       要执行的命令
+     * @param timeoutMs 超时（毫秒）
+     * @return 命令输出，出错或未连接时返回空串
+     */
+    public static String shell(String cmd, int timeoutMs) {
+        VehicleAdbClient client = getAdb();
+        if (client == null) {
+            return "";
+        }
+        return client.shellQuiet(cmd, timeoutMs);
     }
 
     // ===================== 内部实现 =====================
@@ -358,15 +450,50 @@ public final class Vehicle {
      */
     private static String resolveDaemonClasspath(StringBuilder diag) {
         String hostApk = appContext.getPackageCodePath();
+        diag.append("host_apk=").append(hostApk).append('\n');
+        diag.append("explicit_dex_path=").append(explicitDexPath).append('\n');
+
+        // 场景 0：调用方显式指定了 dex 路径（动态加载场景，如 AutoJS）
+        // 直接使用该路径，不再自动判断。由于 lib 编译时已将 hiddenapibypass
+        // 合并进同一 dex，故只需这一个路径作为 CLASSPATH。
+        if (explicitDexPath != null && !explicitDexPath.isEmpty()) {
+            log("I", "using explicit dexPath: " + explicitDexPath);
+            diag.append("daemon_src=").append(explicitDexPath).append(" (explicit)\n");
+            // 验证本地文件存在
+            File f = new File(explicitDexPath);
+            if (!f.exists() || !f.canRead()) {
+                log("E", "explicit dexPath not readable by app: " + explicitDexPath);
+                diag.append("ERROR: explicit dexPath not readable: ").append(explicitDexPath).append('\n');
+                return null;
+            }
+            // 确保 shell uid 可读（必要时推送到 /data/local/tmp/）
+            String usable = ensureShellReadable(explicitDexPath, diag);
+            if (usable == null) {
+                log("E", "cannot make explicit dexPath shell-readable: " + explicitDexPath);
+                return null;
+            }
+            return usable;
+        }
+
+        // 自动判断场景：通过反射定位 daemon 类的代码源
         String daemonPath = getCodeSourcePath(VehicleDaemon.class);
         String hiddenApiPath = getCodeSourcePath(HiddenApiBypass.class);
 
-        diag.append("host_apk=").append(hostApk).append('\n');
         diag.append("daemon_src=").append(daemonPath).append('\n');
         diag.append("hiddenapi_src=").append(hiddenApiPath).append('\n');
 
+        // 无法确定 daemon 类的代码源（ProtectionDomain 和 ClassLoader 反射均失败）
+        if (daemonPath == null) {
+            log("E", "cannot determine daemon class code source "
+                    + "(ProtectionDomain and ClassLoader reflection both failed), "
+                    + "consider passing explicit dexPath to init()");
+            diag.append("ERROR: daemon code source not found "
+                    + "(pass explicit dexPath to init() for dynamic loading)\n");
+            return null;
+        }
+
         // 场景 1：静态编译，daemon 类在宿主 APK 内
-        if (daemonPath == null || daemonPath.equals(hostApk)) {
+        if (daemonPath.equals(hostApk)) {
             log("I", "daemon class is in host APK, using host APK as classpath");
             return hostApk;
         }
@@ -479,8 +606,24 @@ public final class Vehicle {
         }
     }
 
-    /** 获取类的实际代码源文件路径（dex/jar/apk 的文件系统路径） */
+    /**
+     * 获取类的实际代码源文件路径（dex/jar/apk 的文件系统路径）。
+     *
+     * <p>按以下顺序尝试定位：
+     * <ol>
+     *   <li>ProtectionDomain.getCodeSource()（静态编译场景）
+     *   <li>遍历整个 ClassLoader 链，反射 BaseDexClassLoader.pathList.dexElements
+     *       （动态加载场景，如 AutoJS 的 DexClassLoader / 自定义 ClassLoader）
+     * </ol>
+     *
+     * @param clazz 要查找的类
+     * @return dex/jar/apk 的绝对路径，或 null 表示无法确定
+     */
     private static String getCodeSourcePath(Class<?> clazz) {
+        String hostApk = null;
+        try { hostApk = appContext.getPackageCodePath(); } catch (Throwable ignored) {}
+
+        // 方法 1：ProtectionDomain.getCodeSource()（静态编译场景）
         try {
             java.security.CodeSource cs = clazz.getProtectionDomain().getCodeSource();
             if (cs != null && cs.getLocation() != null) {
@@ -489,6 +632,111 @@ public final class Vehicle {
                     return java.net.URLDecoder.decode(path, "UTF-8");
                 }
             }
+        } catch (Throwable ignored) {}
+
+        // 方法 2：遍历 ClassLoader 链，反射 BaseDexClassLoader.pathList.dexElements
+        // AutoJS 等动态加载宿主可能使用多层自定义 ClassLoader 包装 DexClassLoader，
+        // 需沿 parent 链逐层查找 BaseDexClassLoader。
+        ClassLoader cl = clazz.getClassLoader();
+        int clDepth = 0;
+        while (cl != null) {
+            String result = extractDexPathFromClassLoader(cl, clazz, hostApk, clDepth);
+            if (result != null) {
+                return result;
+            }
+            cl = cl.getParent();
+            clDepth++;
+        }
+
+        log("E", "getCodeSourcePath failed for " + clazz.getName()
+                + ": tried ProtectionDomain + ClassLoader chain (depth=" + clDepth + ")");
+        return null;
+    }
+
+    /**
+     * 从单个 ClassLoader 中提取 dex 路径。
+     *
+     * <p>查找该 ClassLoader 及其继承链中的 BaseDexClassLoader，
+     * 反射 pathList.dexElements，返回非宿主 APK 的 dex/jar/apk 路径。
+     */
+    private static String extractDexPathFromClassLoader(ClassLoader cl, Class<?> target,
+                                                         String hostApk, int depth) {
+        Class<?> clClass = cl.getClass();
+        // 沿继承链查找 BaseDexClassLoader
+        while (clClass != null) {
+            if ("dalvik.system.BaseDexClassLoader".equals(clClass.getName())) {
+                String result = readDexElementsFromBaseDex(cl, clClass, target, hostApk, depth);
+                if (result != null) return result;
+                break;
+            }
+            clClass = clClass.getSuperclass();
+        }
+        return null;
+    }
+
+    /**
+     * 反射 BaseDexClassLoader 的 pathList.dexElements，提取 dex 路径。
+     *
+     * <p>兼容不同 Android 版本：DexElement.path 可能是 File、String 或其他类型；
+     * 也尝试 dexPath、file 字段作为兜底。
+     */
+    private static String readDexElementsFromBaseDex(ClassLoader cl, Class<?> baseDexClass,
+                                                     Class<?> target, String hostApk, int depth) {
+        try {
+            java.lang.reflect.Field pathListField = baseDexClass.getDeclaredField("pathList");
+            pathListField.setAccessible(true);
+            Object pathList = pathListField.get(cl);
+            if (pathList == null) return null;
+
+            java.lang.reflect.Field dexElementsField =
+                    pathList.getClass().getDeclaredField("dexElements");
+            dexElementsField.setAccessible(true);
+            Object[] elements = (Object[]) dexElementsField.get(pathList);
+            if (elements == null || elements.length == 0) return null;
+
+            String fallbackHostApk = null;
+            for (Object element : elements) {
+                if (element == null) continue;
+                // 尝试多个可能的字段名：path / dexPath / file
+                String dexPath = readElementField(element, "path");
+                if (dexPath == null) dexPath = readElementField(element, "dexPath");
+                if (dexPath == null) dexPath = readElementField(element, "file");
+                if (dexPath == null || dexPath.isEmpty()) continue;
+
+                // 跳过目录（资源元素，非 dex）
+                File f = new File(dexPath);
+                if (f.isDirectory()) continue;
+
+                // 记录宿主 APK 路径作为最后兜底
+                if (hostApk != null && dexPath.equals(hostApk)) {
+                    if (fallbackHostApk == null) fallbackHostApk = dexPath;
+                    continue;
+                }
+                // 找到非宿主 APK 的 dex/jar/apk，这就是动态加载的代码源
+                log("I", "found " + target.getSimpleName() + " dex at clDepth=" + depth
+                        + ": " + dexPath);
+                return dexPath;
+            }
+            // 所有元素都是宿主 APK（说明类确实在宿主 APK 内，只是 ProtectionDomain 不可用）
+            if (fallbackHostApk != null) {
+                log("I", target.getSimpleName() + " only found in host APK (clDepth=" + depth + ")");
+                return fallbackHostApk;
+            }
+        } catch (Throwable e) {
+            log("D", "readDexElementsFromBaseDex failed at clDepth=" + depth
+                    + " for " + cl.getClass().getName() + ": " + e.getMessage());
+        }
+        return null;
+    }
+
+    /** 反射 DexElement 的字段，兼容 File/String 返回类型 */
+    private static String readElementField(Object element, String fieldName) {
+        try {
+            java.lang.reflect.Field f = element.getClass().getDeclaredField(fieldName);
+            f.setAccessible(true);
+            Object val = f.get(element);
+            if (val instanceof File) return ((File) val).getAbsolutePath();
+            if (val instanceof String) return (String) val;
         } catch (Throwable ignored) {}
         return null;
     }

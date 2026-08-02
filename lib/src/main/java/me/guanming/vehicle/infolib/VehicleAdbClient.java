@@ -16,12 +16,23 @@ import java.security.Signature;
 import java.security.interfaces.RSAPublicKey;
 
 /**
- * 简化的 ADB 二进制协议客户端（vehicle 包内部使用）。
+ * 简化的 ADB 二进制协议客户端。
  *
  * <p>实现 A_CNXN/A_AUTH/A_OPEN/A_WRTE/A_OKAY/A_CLSE 消息，
  * 通过 TCP 127.0.0.1:5555 连接车机本机 ADB。
+ *
+ * <p>可通过 {@link Vehicle#getAdb()} 获取已连接的实例，
+ * 复用 init 时建立的 ADB 连接执行任意 shell 命令。
+ *
+ * <p>使用示例：
+ * <pre>
+ *   VehicleAdbClient adb = Vehicle.getAdb();
+ *   if (adb != null) {
+ *       String output = adb.shellQuiet("getprop ro.product.model", 10000);
+ *   }
+ * </pre>
  */
-final class VehicleAdbClient {
+public final class VehicleAdbClient {
 
     private static final String TAG = "VehicleAdbClient";
 
@@ -47,15 +58,18 @@ final class VehicleAdbClient {
         this.logger = logger;
     }
 
-    boolean isConnected() {
+    /** 是否已连接 */
+    public boolean isConnected() {
         return socket != null && socket.isConnected() && !socket.isClosed();
     }
 
-    synchronized boolean connect() {
+    /** 连接本机 ADB（127.0.0.1:5555） */
+    public synchronized boolean connect() {
         return connect("127.0.0.1", 5555);
     }
 
-    synchronized boolean connect(String host, int port) {
+    /** 连接指定 host:port 的 ADB */
+    public synchronized boolean connect(String host, int port) {
         if (isConnected()) return true;
         try {
             close();
@@ -175,7 +189,15 @@ final class VehicleAdbClient {
         }
     }
 
-    synchronized String shell(String cmd, int timeoutMs) throws IOException {
+    /**
+     * 执行 shell 命令并返回输出。
+     *
+     * @param cmd       要执行的命令
+     * @param timeoutMs 超时（毫秒）
+     * @return 命令的标准输出（stdout+stderr 合并）
+     * @throws IOException 连接断开或超时
+     */
+    public synchronized String shell(String cmd, int timeoutMs) throws IOException {
         int oldTimeout = socket != null ? socket.getSoTimeout() : 30000;
         if (socket != null) socket.setSoTimeout(timeoutMs);
         try {
@@ -239,7 +261,8 @@ final class VehicleAdbClient {
         }
     }
 
-    synchronized void close() {
+    /** 关闭连接 */
+    public synchronized void close() {
         try {
             if (socket != null) socket.close();
         } catch (Exception ignored) {
@@ -307,8 +330,14 @@ final class VehicleAdbClient {
         }
     }
 
-    /** 静默执行 shell：捕获所有异常，超时/出错返回空串 */
-    String shellQuiet(String cmd, int timeoutMs) {
+    /**
+     * 静默执行 shell：捕获所有异常，超时/出错返回空串。
+     *
+     * @param cmd       要执行的命令
+     * @param timeoutMs 超时（毫秒）
+     * @return 命令输出，出错时返回空串
+     */
+    public String shellQuiet(String cmd, int timeoutMs) {
         try {
             return shell(cmd, timeoutMs);
         } catch (SocketTimeoutException e) {
