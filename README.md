@@ -6,6 +6,8 @@
 >
 > 本库**仅针对初代钛7顶配（34 控制器）**进行适配与验证。其他车型（不同控制器数量、不同 ECU 配置、不同协议版本）的字段 ID（fid）、设备号（device）、事务码（transact）及枚举映射可能存在差异，**需自行测试与调整**。作者不保证在其他车型上的可用性，也不对因使用本库造成的任何后果负责。
 
+autojs 动态调用示例项目：[vehicle_info_autojs](https://github.com/GuanmingLu/vehicle_info_autojs)
+
 ## 工作原理
 
 ```
