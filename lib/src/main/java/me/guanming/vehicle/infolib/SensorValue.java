@@ -119,10 +119,11 @@ public final class SensorValue {
         }
     }
 
-    /** 格式化数值：maxDecimals<0 不限（截断到 3 位去浮点噪声），=0 取整，>0 四舍五入后去尾 0 */
+    /** 格式化数值：maxDecimals<0 不限（四舍五入到 3 位去浮点噪声），=0 取整，>0 四舍五入后去尾 0 */
     private static String formatDouble(double d, int maxDecimals) {
         if (maxDecimals < 0) {
-            double rounded = Math.floor(d * 1000) / 1000.0;
+            // 用四舍五入而非 floor：负数 floor 会向远离 0 的方向多进一位（-1.200000047 -> -1.201）
+            double rounded = Math.round(d * 1000) / 1000.0;
             return trimTrailingZeros(rounded);
         }
         if (maxDecimals == 0) {

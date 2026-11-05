@@ -140,9 +140,15 @@ public final class Sensor {
                 case INT_TEMP_C: { double v = raw; return (v < -50 || v >= 81) ? null : v; }
                 case INT_TEMP_C_OFS40: { double v = raw - 40.0; return (v < -50 || v >= 81) ? null : v; }
                 case INT_KPA: return (double) raw;
-                case FLOAT_VOLT: case FLOAT_PERCENT: case FLOAT_KW: case FLOAT_KWH: {
+                case FLOAT_VOLT: case FLOAT_PERCENT: case FLOAT_KW: {
                     float f = Float.intBitsToFloat(raw);
                     return (Float.isNaN(f) || Float.isInfinite(f) || f < -1.0f) ? null : (double) f;
+                }
+                case FLOAT_KWH: {
+                    // 电耗/油耗等字段在动能回收时可为负值（如 -1.2 kWh/100km），不能按负值过滤，
+                    // 仅 NaN/Infinity 视为无效。
+                    float f = Float.intBitsToFloat(raw);
+                    return (Float.isNaN(f) || Float.isInfinite(f)) ? null : (double) f;
                 }
             }
             return null;
