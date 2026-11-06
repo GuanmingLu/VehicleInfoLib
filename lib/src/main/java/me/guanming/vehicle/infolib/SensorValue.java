@@ -59,6 +59,23 @@ public final class SensorValue {
     }
 
     /**
+     * 供新的 abilities 命名空间构造解码结果。
+     *
+     * <p>普通调用方一般不需要使用；它是包外无法访问构造器时的唯一公开入口。
+     *
+     * @param raw        原始 int 值，null 表示读取失败
+     * @param value      解码后的数值，null 表示无效
+     * @param isEnum     是否为枚举/布尔类型
+     * @param enumMap    枚举映射，可为 null
+     * @param defaultUnit 默认单位，可为 null
+     * @return SensorValue
+     */
+    public static SensorValue of(Integer raw, Double value, boolean isEnum,
+                                 Map<Integer, String> enumMap, String defaultUnit) {
+        return new SensorValue(raw, value, isEnum, enumMap, defaultUnit);
+    }
+
+    /**
      * 格式化为显示字符串（默认参数：小数位不限，使用默认单位并自动添加空格）。
      *
      * @return 显示字符串
