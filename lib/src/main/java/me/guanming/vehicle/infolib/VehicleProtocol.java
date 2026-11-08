@@ -12,7 +12,7 @@ package me.guanming.vehicle.infolib;
  *
  * <p>daemon 通过 BYD autoservice 的 transact(5/7/9) 读取、transact(6) 写入。
  */
-final class VehicleProtocol {
+public final class VehicleProtocol {
 
     private VehicleProtocol() {}
 
@@ -32,10 +32,10 @@ final class VehicleProtocol {
     static final int TX_READ_BATCH = 4;
 
     /** BYD autoservice 的事务码 */
-    static final int BYD_TX_READ_INT = 5;
-    static final int BYD_TX_READ_FLOAT = 7;
-    static final int BYD_TX_READ_STRING = 9;
-    static final int BYD_TX_WRITE_INT = 6;
+    public static final int BYD_TX_READ_INT = 5;
+    public static final int BYD_TX_READ_FLOAT = 7;
+    public static final int BYD_TX_READ_STRING = 9;
+    public static final int BYD_TX_WRITE_INT = 6;
 
     /** 批量读取上限 */
     static final int MAX_READ_BATCH_SIZE = 128;

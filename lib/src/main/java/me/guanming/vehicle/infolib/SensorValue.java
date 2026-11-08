@@ -44,17 +44,46 @@ public final class SensorValue {
     /** 默认单位（仅数值类型有效，可为空串） */
     private final String defaultUnit;
 
+    /** abilities 扩展：简化单位（如 "celsius"），无则 null */
+    public final String unit;
+
+    /** abilities 扩展：枚举标签（如 "D"），有值时 format() 直接返回它 */
+    public final String text;
+
+    /** abilities 扩展：一次读取的多个字段原始值，null 表示单字段 */
+    public final int[] featureRaws;
+
+    /** abilities 扩展：与 featureRaws 对应的 feature 名 */
+    public final String[] featureNames;
+
     SensorValue(Integer raw, Double value, boolean isEnum,
                 Map<Integer, String> enumMap, String defaultUnit) {
+        this(raw, value, isEnum, enumMap, defaultUnit, null, null, null, null);
+    }
+
+    private SensorValue(Integer raw, Double value, boolean isEnum,
+                        Map<Integer, String> enumMap, String defaultUnit,
+                        String unit, String text, int[] featureRaws, String[] featureNames) {
         this.raw = raw;
         this.value = value;
         this.isEnum = isEnum;
         this.enumMap = enumMap == null ? Collections.emptyMap() : enumMap;
         this.defaultUnit = defaultUnit == null ? "" : defaultUnit;
+        this.unit = unit;
+        this.text = text;
+        this.featureRaws = featureRaws;
+        this.featureNames = featureNames;
+    }
+
+    /** abilities 使用的公开工厂：由目录 codec 解码结果构造。 */
+    public static SensorValue of(Integer raw, Double value, String unit, String text,
+                                 int[] featureRaws, String[] featureNames) {
+        return new SensorValue(raw, value, false, null, unit == null ? "" : unit,
+                unit, text, featureRaws, featureNames);
     }
 
     /** 读取失败的快捷构造 */
-    static SensorValue failed() {
+    public static SensorValue failed() {
         return new SensorValue(null, null, false, null, null);
     }
 
@@ -92,6 +121,7 @@ public final class SensorValue {
      * @return 显示字符串
      */
     public String format(int maxDecimals, String customUnit) {
+        if (text != null) return text;
         if (raw == null) return "读取失败";
         if (value == null) return "无效 (raw=" + raw + ")";
 

@@ -284,6 +284,29 @@ VehicleInfoLib/
 4. **车型差异**：本库的字段 ID、设备号、事务码基于**初代钛7顶配（34 控制器）**抓包适配。其他车型需自行抓包比对，修改 `Sensor` / `Control` 中的常量定义。
 5. **动态加载**：若将 dex 动态加载到第三方 App（非静态编译），库会自动将 daemon 所需的 dex 推送到 `/data/local/tmp/` 并拼接 CLASSPATH，无需额外处理。
 
+## abilities 能力 API（自动生成）
+
+除 `Sensor` / `Control` 之外，本库另提供 `me.guanming.vehicle.infolib.abilities` 包：**27 个顶层静态类、206 个静态嵌套能力入口**。一级能力 id 是顶层类，其余每段是 `public static final` 嵌套类（多段 id 不压缩），例如 `A.bodywork.door.open.read(area)`。目录数据全部编译成 Java 代码，运行时不需要 JSON、不需要目录常量、不需要传能力 id。
+
+```javascript
+runtime.loadDex('./classes.dex');
+const A = Packages.me.guanming.vehicle.infolib.abilities;
+const R = Packages.me.guanming.vehicle.infolib.abilities.Runtime;
+R.setVehicleProfile(4, 3, 3);                   // 车型配置，启动时设一次
+let t = A.ac.cabin_temperature.read();          // SensorValue
+A.ac.temperature.write('driver', 24, 'celsius'); // void，失败抛异常
+A.bodywork.door.open.read(1);                   // bodywork=类，door/open=嵌套类
+```
+
+- `read(...)` 返回 `SensorValue`，读取失败/sentinel 返回 `SensorValue.failed()`；`write(...)` 返回 `void`，参数非法或写入失败直接抛 Java 异常。
+- selector / enum **只接受短名**（`driver`、`celsius`），数值参数按目录 `values` / `ranges` 校验。
+- 目录里有 34 个 feature 没有数字 id、只有 BYD framework 常量名。首次加载任一能力类时 `Runtime` 会**自动批量反射解析一次**，结果只保存在本次运行时的内存里——不需要静态常量表、不需要额外部署步骤、不需要导出或落盘。建议宿主仍先调用 `Vehicle.init(context)`。
+- 另有 10 个能力含车型 `profiles` 分支，必须先 `Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)`，否则明确抛异常。
+- 完整签名、能力简介、参数说明与每个参数值的含义、初始化与车型配置见 [ABILITIES_API.md](ABILITIES_API.md)（206 条能力，每条一个段落）。
+- 源码由 `tools/gen_abilities.py` 从 `assets/byd/devices/*.json` 生成，请勿手改；目录升级后重跑生成器即可。
+
+> 该包只依赖既有 `Vehicle.read/write`；`Sensor` / `Control` 的 API 与行为未改动。
+
 ## 许可证
 
 本项目仅供学习与研究使用。使用本库读取或控制车辆数据时，请遵守当地法律法规，并自行承担相关风险。

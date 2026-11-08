@@ -1,0 +1,1138 @@
+{
+  "capabilities": 206,
+  "topLevelClasses": 27,
+  "stats": {
+    "removed_old_files": 27,
+    "runtime_fid_reads": 29,
+    "runtime_fid_writes": 98
+  },
+  "runtimeFeatureIndex": [
+    {
+      "name": "AC_CTRL_SOURCE_SET",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_SECOND_ROW_LEFT_AVOID_BLOW_TO_PERSON_MODE_SIGNAL",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_SECOND_ROW_LEFT_BLOW_TO_PERSON_MODE_SIGNAL",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_SECOND_ROW_LEFT_SIDE_LEFT_RIGHT_SWEEP_SIGNAL",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_SECOND_ROW_RIGHT_AVOID_BLOW_TO_PERSON_MODE_SIGNAL",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_SECOND_ROW_RIGHT_BLOW_TO_PERSON_MODE_SIGNAL",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_SECOND_ROW_RIGHT_SIDE_LEFT_RIGHT_SWEEP_SIGNAL",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_TEMPERATURE_UNIT",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AC_TEMPERATURE_UNIT_SET",
+      "owner": "Ac",
+      "auditedId": 0
+    },
+    {
+      "name": "AUDIO_MUTE_STATUS",
+      "owner": "Audio",
+      "auditedId": 0
+    },
+    {
+      "name": "AUDIO_MUTE_STATUS_SET",
+      "owner": "Audio",
+      "auditedId": 0
+    },
+    {
+      "name": "AUDIO_NAVI_MUTE_STATUS",
+      "owner": "Audio",
+      "auditedId": 0
+    },
+    {
+      "name": "AUDIO_NAVI_VOLUME",
+      "owner": "Audio",
+      "auditedId": 0
+    },
+    {
+      "name": "AUDIO_VOLUME",
+      "owner": "Audio",
+      "auditedId": 0
+    },
+    {
+      "name": "CHARGING_CHARGE_WIRELESS_CHARGING_SWITCH_SET",
+      "owner": "Charging",
+      "auditedId": 0
+    },
+    {
+      "name": "CHARGING_DISCHARGE_TO_CAR_STATE_SET",
+      "owner": "Charging",
+      "auditedId": 0
+    },
+    {
+      "name": "ENGINE_CHARGE_POWER",
+      "owner": "Engine",
+      "auditedId": 0
+    },
+    {
+      "name": "GEARBOX_AUTO_MODE_TYPE",
+      "owner": "Gearbox",
+      "auditedId": 555745336
+    },
+    {
+      "name": "GEARBOX_EPB_STATE",
+      "owner": "Gearbox",
+      "auditedId": 0
+    },
+    {
+      "name": "GEARBOX_MANUAL_MODE_LEVEL",
+      "owner": "Gearbox",
+      "auditedId": 0
+    },
+    {
+      "name": "GEARBOX_PARK_BRAKE_SWITCH",
+      "owner": "Gearbox",
+      "auditedId": 0
+    },
+    {
+      "name": "GEARBOX_TYPE",
+      "owner": "Gearbox",
+      "auditedId": 0
+    },
+    {
+      "name": "LIGHT_DAY_RUNNING_LIGHT_AUTO_STATE_SET",
+      "owner": "Light",
+      "auditedId": 1125122118
+    },
+    {
+      "name": "SENSOR_RAIN_FALL_VALUE",
+      "owner": "Sensor",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_CAR_EXTREARMIR_FOLLOWUP_SWITCH",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_CAR_EXTREARMIR_FOLLOWUP_SWITCH_SET",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_CMD_HEADLAMP_HEIGHT_LEVEL_SET",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_IAL_ALL_BRIGHTNESS",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_IAL_BACK_BRIGHTNESS",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_IAL_FRONT_BRIGHTNESS",
+      "owner": "Setting",
+      "auditedId": 1121976328
+    },
+    {
+      "name": "SET_INTERIOR_ATMOSPHERE_LAMP_AREA_SET",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_INTERIOR_ATMOSPHERE_LAMP_BRIGHTNESS_SET",
+      "owner": "Setting",
+      "auditedId": 1069547536
+    },
+    {
+      "name": "SET_INTERIOR_ATMOSPHERE_LAMP_COLOR_SET",
+      "owner": "Setting",
+      "auditedId": 0
+    },
+    {
+      "name": "SET_INTERIOR_ATMOSPHERE_LAMP_SOURCE_SET",
+      "owner": "Setting",
+      "auditedId": 0
+    }
+  ],
+  "profileCapabilities": [
+    "ac.airflow_mode",
+    "ac.temperature",
+    "ac.zone_fan_level",
+    "ac.zone_power",
+    "setting.seat_heating",
+    "setting.seat_heating_off",
+    "setting.seat_ventilation",
+    "setting.seat_ventilation_off",
+    "setting.steering_wheel_heating",
+    "setting.steering_wheel_heating_level"
+  ],
+  "notes": {
+    "ac.airflow_mode": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)",
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.defrost": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.mirror_heating": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.wind_mode": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.zone_fan_level": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)",
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.compressor": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.control_mode": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.cycle_mode": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.power": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.separate_control": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.ventilation": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.zone_power": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "ac.temperature": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)",
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "ac.temperature_unit": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "engine.charge_power": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "sensor.rain_amount": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "setting.headlamp_height": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "setting.steering_wheel_heating": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "setting.steering_wheel_heating_level": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "setting.ambient_light_area_brightness": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "setting.mirror_auto_fold": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "setting.mirror_follow_up": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "setting.seat_heating": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "setting.seat_heating_off": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "setting.seat_ventilation": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "setting.seat_ventilation_off": [
+      "含车型 profiles 分支，调用前须先 Runtime.setVehicleProfile(climateZones, seatHeating, steeringWheelHeating)"
+    ],
+    "shortcut_audio.master_volume": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_audio.navigation_volume": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_audio.master_mute": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_audio.navigation_mute": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_charging.wireless": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_charging.discharge": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_gearbox.type": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_gearbox.auto_mode": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_gearbox.manual_mode": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_gearbox.epb": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_gearbox.park_switch": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ],
+    "shortcut_gearbox.legacy_daylight": [
+      "部分 feature 无数字 id，由 Runtime 初始化时从 framework 反射解析"
+    ]
+  },
+  "classes": [
+    {
+      "class": "abilities.ac.airflow_mode",
+      "capabilityId": "ac.airflow_mode"
+    },
+    {
+      "class": "abilities.ac.cabin_temperature",
+      "capabilityId": "ac.cabin_temperature"
+    },
+    {
+      "class": "abilities.ac.close_passenger_vent",
+      "capabilityId": "ac.close_passenger_vent"
+    },
+    {
+      "class": "abilities.ac.compressor",
+      "capabilityId": "ac.compressor"
+    },
+    {
+      "class": "abilities.ac.control_mode",
+      "capabilityId": "ac.control_mode"
+    },
+    {
+      "class": "abilities.ac.cycle_mode",
+      "capabilityId": "ac.cycle_mode"
+    },
+    {
+      "class": "abilities.ac.defrost",
+      "capabilityId": "ac.defrost"
+    },
+    {
+      "class": "abilities.ac.maximum_cooling",
+      "capabilityId": "ac.maximum_cooling"
+    },
+    {
+      "class": "abilities.ac.mirror_heating",
+      "capabilityId": "ac.mirror_heating"
+    },
+    {
+      "class": "abilities.ac.outside_temperature",
+      "capabilityId": "ac.outside_temperature"
+    },
+    {
+      "class": "abilities.ac.perfume_concentration",
+      "capabilityId": "ac.perfume_concentration"
+    },
+    {
+      "class": "abilities.ac.perfume_type",
+      "capabilityId": "ac.perfume_type"
+    },
+    {
+      "class": "abilities.ac.power",
+      "capabilityId": "ac.power"
+    },
+    {
+      "class": "abilities.ac.rear_lock_state",
+      "capabilityId": "ac.rear_lock_state"
+    },
+    {
+      "class": "abilities.ac.rear_max_fan_level",
+      "capabilityId": "ac.rear_max_fan_level"
+    },
+    {
+      "class": "abilities.ac.separate_control",
+      "capabilityId": "ac.separate_control"
+    },
+    {
+      "class": "abilities.ac.synchronization",
+      "capabilityId": "ac.synchronization"
+    },
+    {
+      "class": "abilities.ac.temperature",
+      "capabilityId": "ac.temperature"
+    },
+    {
+      "class": "abilities.ac.temperature_unit",
+      "capabilityId": "ac.temperature_unit"
+    },
+    {
+      "class": "abilities.ac.ventilation",
+      "capabilityId": "ac.ventilation"
+    },
+    {
+      "class": "abilities.ac.wind_mode",
+      "capabilityId": "ac.wind_mode"
+    },
+    {
+      "class": "abilities.ac.zone_fan_level",
+      "capabilityId": "ac.zone_fan_level"
+    },
+    {
+      "class": "abilities.ac.zone_power",
+      "capabilityId": "ac.zone_power"
+    },
+    {
+      "class": "abilities.adas.acc_cruise_state",
+      "capabilityId": "adas.acc_cruise_state"
+    },
+    {
+      "class": "abilities.adas.aeb_state",
+      "capabilityId": "adas.aeb_state"
+    },
+    {
+      "class": "abilities.adas.auto_hold_state",
+      "capabilityId": "adas.auto_hold_state"
+    },
+    {
+      "class": "abilities.adas.blind_spot_warning",
+      "capabilityId": "adas.blind_spot_warning"
+    },
+    {
+      "class": "abilities.adas.brake_foot_sense",
+      "capabilityId": "adas.brake_foot_sense"
+    },
+    {
+      "class": "abilities.adas.door_open_warning",
+      "capabilityId": "adas.door_open_warning"
+    },
+    {
+      "class": "abilities.adas.electronic_stability_control",
+      "capabilityId": "adas.electronic_stability_control"
+    },
+    {
+      "class": "abilities.adas.forward_collision_warning",
+      "capabilityId": "adas.forward_collision_warning"
+    },
+    {
+      "class": "abilities.adas.front_cross_traffic_alert",
+      "capabilityId": "adas.front_cross_traffic_alert"
+    },
+    {
+      "class": "abilities.adas.highway_navigation_state",
+      "capabilityId": "adas.highway_navigation_state"
+    },
+    {
+      "class": "abilities.adas.hill_descent_control",
+      "capabilityId": "adas.hill_descent_control"
+    },
+    {
+      "class": "abilities.adas.intelligent_torque_control",
+      "capabilityId": "adas.intelligent_torque_control"
+    },
+    {
+      "class": "abilities.adas.lane_departure_mode",
+      "capabilityId": "adas.lane_departure_mode"
+    },
+    {
+      "class": "abilities.adas.traffic_jam_assist_state",
+      "capabilityId": "adas.traffic_jam_assist_state"
+    },
+    {
+      "class": "abilities.adas.urban_navigation_state",
+      "capabilityId": "adas.urban_navigation_state"
+    },
+    {
+      "class": "abilities.air_quality.pm25",
+      "capabilityId": "air_quality.pm25"
+    },
+    {
+      "class": "abilities.air_quality.pm25_detection",
+      "capabilityId": "air_quality.pm25_detection"
+    },
+    {
+      "class": "abilities.air_quality.purification",
+      "capabilityId": "air_quality.purification"
+    },
+    {
+      "class": "abilities.audio.external_broadcast_end",
+      "capabilityId": "audio.external_broadcast_end"
+    },
+    {
+      "class": "abilities.audio.external_broadcast_position",
+      "capabilityId": "audio.external_broadcast_position"
+    },
+    {
+      "class": "abilities.audio.headrest_effect",
+      "capabilityId": "audio.headrest_effect"
+    },
+    {
+      "class": "abilities.audio.lock_sound_playback_flag",
+      "capabilityId": "audio.lock_sound_playback_flag"
+    },
+    {
+      "class": "abilities.audio.prompt_volume",
+      "capabilityId": "audio.prompt_volume"
+    },
+    {
+      "class": "abilities.audio.simulated_engine_sound",
+      "capabilityId": "audio.simulated_engine_sound"
+    },
+    {
+      "class": "abilities.audio.sound_balance",
+      "capabilityId": "audio.sound_balance"
+    },
+    {
+      "class": "abilities.audio.sound_focus",
+      "capabilityId": "audio.sound_focus"
+    },
+    {
+      "class": "abilities.audio.sound_profile",
+      "capabilityId": "audio.sound_profile"
+    },
+    {
+      "class": "abilities.bodywork.charging_flap",
+      "capabilityId": "bodywork.charging_flap"
+    },
+    {
+      "class": "abilities.bodywork.door.open",
+      "capabilityId": "bodywork.door.open"
+    },
+    {
+      "class": "abilities.bodywork.electric_door.actuator_state",
+      "capabilityId": "bodywork.electric_door.actuator_state"
+    },
+    {
+      "class": "abilities.bodywork.electric_door.position",
+      "capabilityId": "bodywork.electric_door.position"
+    },
+    {
+      "class": "abilities.bodywork.electric_step",
+      "capabilityId": "bodywork.electric_step"
+    },
+    {
+      "class": "abilities.bodywork.front_hood",
+      "capabilityId": "bodywork.front_hood"
+    },
+    {
+      "class": "abilities.bodywork.ground_clearance",
+      "capabilityId": "bodywork.ground_clearance"
+    },
+    {
+      "class": "abilities.bodywork.manual_trunk_release",
+      "capabilityId": "bodywork.manual_trunk_release"
+    },
+    {
+      "class": "abilities.bodywork.power_state",
+      "capabilityId": "bodywork.power_state"
+    },
+    {
+      "class": "abilities.bodywork.roof.command",
+      "capabilityId": "bodywork.roof.command"
+    },
+    {
+      "class": "abilities.bodywork.roof.position",
+      "capabilityId": "bodywork.roof.position"
+    },
+    {
+      "class": "abilities.bodywork.sliding_door",
+      "capabilityId": "bodywork.sliding_door"
+    },
+    {
+      "class": "abilities.bodywork.spoiler",
+      "capabilityId": "bodywork.spoiler"
+    },
+    {
+      "class": "abilities.bodywork.sunshade.position",
+      "capabilityId": "bodywork.sunshade.position"
+    },
+    {
+      "class": "abilities.bodywork.sunshade.stop",
+      "capabilityId": "bodywork.sunshade.stop"
+    },
+    {
+      "class": "abilities.bodywork.trunk.command",
+      "capabilityId": "bodywork.trunk.command"
+    },
+    {
+      "class": "abilities.bodywork.trunk.open_height",
+      "capabilityId": "bodywork.trunk.open_height"
+    },
+    {
+      "class": "abilities.bodywork.trunk.position",
+      "capabilityId": "bodywork.trunk.position"
+    },
+    {
+      "class": "abilities.bodywork.vehicle_height",
+      "capabilityId": "bodywork.vehicle_height"
+    },
+    {
+      "class": "abilities.bodywork.window.action",
+      "capabilityId": "bodywork.window.action"
+    },
+    {
+      "class": "abilities.bodywork.window.command",
+      "capabilityId": "bodywork.window.command"
+    },
+    {
+      "class": "abilities.bodywork.window.position",
+      "capabilityId": "bodywork.window.position"
+    },
+    {
+      "class": "abilities.bodywork.window_sunshade",
+      "capabilityId": "bodywork.window_sunshade"
+    },
+    {
+      "class": "abilities.charging.battery_state",
+      "capabilityId": "charging.battery_state"
+    },
+    {
+      "class": "abilities.charging.battery_voltage",
+      "capabilityId": "charging.battery_voltage"
+    },
+    {
+      "class": "abilities.charging.charger_work_state",
+      "capabilityId": "charging.charger_work_state"
+    },
+    {
+      "class": "abilities.charging.current",
+      "capabilityId": "charging.current"
+    },
+    {
+      "class": "abilities.charging.external_discharge_current",
+      "capabilityId": "charging.external_discharge_current"
+    },
+    {
+      "class": "abilities.charging.gun_state",
+      "capabilityId": "charging.gun_state"
+    },
+    {
+      "class": "abilities.charging.power",
+      "capabilityId": "charging.power"
+    },
+    {
+      "class": "abilities.charging.soc_save_mode",
+      "capabilityId": "charging.soc_save_mode"
+    },
+    {
+      "class": "abilities.door_lock.all_doors",
+      "capabilityId": "door_lock.all_doors"
+    },
+    {
+      "class": "abilities.door_lock.child_lock_state",
+      "capabilityId": "door_lock.child_lock_state"
+    },
+    {
+      "class": "abilities.door_lock.lock_state",
+      "capabilityId": "door_lock.lock_state"
+    },
+    {
+      "class": "abilities.energy.extended_range",
+      "capabilityId": "energy.extended_range"
+    },
+    {
+      "class": "abilities.energy.mode",
+      "capabilityId": "energy.mode"
+    },
+    {
+      "class": "abilities.energy.operation_mode",
+      "capabilityId": "energy.operation_mode"
+    },
+    {
+      "class": "abilities.energy.regeneration",
+      "capabilityId": "energy.regeneration"
+    },
+    {
+      "class": "abilities.engine.charge_power",
+      "capabilityId": "engine.charge_power"
+    },
+    {
+      "class": "abilities.engine.indicated_torque",
+      "capabilityId": "engine.indicated_torque"
+    },
+    {
+      "class": "abilities.engine.low_voltage_side_current",
+      "capabilityId": "engine.low_voltage_side_current"
+    },
+    {
+      "class": "abilities.engine.low_voltage_side_voltage",
+      "capabilityId": "engine.low_voltage_side_voltage"
+    },
+    {
+      "class": "abilities.engine.motor_input_voltage",
+      "capabilityId": "engine.motor_input_voltage"
+    },
+    {
+      "class": "abilities.engine.motor_rpm",
+      "capabilityId": "engine.motor_rpm"
+    },
+    {
+      "class": "abilities.engine.motor_temperature",
+      "capabilityId": "engine.motor_temperature"
+    },
+    {
+      "class": "abilities.engine.motor_torque",
+      "capabilityId": "engine.motor_torque"
+    },
+    {
+      "class": "abilities.engine.oil_level",
+      "capabilityId": "engine.oil_level"
+    },
+    {
+      "class": "abilities.engine.power",
+      "capabilityId": "engine.power"
+    },
+    {
+      "class": "abilities.engine.rpm",
+      "capabilityId": "engine.rpm"
+    },
+    {
+      "class": "abilities.engine.voice_simulator",
+      "capabilityId": "engine.voice_simulator"
+    },
+    {
+      "class": "abilities.gearbox.gear",
+      "capabilityId": "gearbox.gear"
+    },
+    {
+      "class": "abilities.instrument.backlight_brightness",
+      "capabilityId": "instrument.backlight_brightness"
+    },
+    {
+      "class": "abilities.instrument.brightness_percent",
+      "capabilityId": "instrument.brightness_percent"
+    },
+    {
+      "class": "abilities.light.auto_high_beam",
+      "capabilityId": "light.auto_high_beam"
+    },
+    {
+      "class": "abilities.light.daytime_light",
+      "capabilityId": "light.daytime_light"
+    },
+    {
+      "class": "abilities.light.double_flash",
+      "capabilityId": "light.double_flash"
+    },
+    {
+      "class": "abilities.light.fog_switch",
+      "capabilityId": "light.fog_switch"
+    },
+    {
+      "class": "abilities.light.headlight_mode",
+      "capabilityId": "light.headlight_mode"
+    },
+    {
+      "class": "abilities.light.high_beam_assist",
+      "capabilityId": "light.high_beam_assist"
+    },
+    {
+      "class": "abilities.light.inside_light",
+      "capabilityId": "light.inside_light"
+    },
+    {
+      "class": "abilities.light.inside_light_on_door",
+      "capabilityId": "light.inside_light_on_door"
+    },
+    {
+      "class": "abilities.light.light_state",
+      "capabilityId": "light.light_state"
+    },
+    {
+      "class": "abilities.light.turn_signal",
+      "capabilityId": "light.turn_signal"
+    },
+    {
+      "class": "abilities.light.turn_signal_state",
+      "capabilityId": "light.turn_signal_state"
+    },
+    {
+      "class": "abilities.panorama.apa_state",
+      "capabilityId": "panorama.apa_state"
+    },
+    {
+      "class": "abilities.panorama.display_mode",
+      "capabilityId": "panorama.display_mode"
+    },
+    {
+      "class": "abilities.panorama.display_parameters",
+      "capabilityId": "panorama.display_parameters"
+    },
+    {
+      "class": "abilities.panorama.output",
+      "capabilityId": "panorama.output"
+    },
+    {
+      "class": "abilities.panorama.rotation",
+      "capabilityId": "panorama.rotation"
+    },
+    {
+      "class": "abilities.power.acc_status",
+      "capabilityId": "power.acc_status"
+    },
+    {
+      "class": "abilities.radar.distance",
+      "capabilityId": "radar.distance"
+    },
+    {
+      "class": "abilities.safety_belt.state",
+      "capabilityId": "safety_belt.state"
+    },
+    {
+      "class": "abilities.safety_belt.warning",
+      "capabilityId": "safety_belt.warning"
+    },
+    {
+      "class": "abilities.sensor.attitude",
+      "capabilityId": "sensor.attitude"
+    },
+    {
+      "class": "abilities.sensor.rain_amount",
+      "capabilityId": "sensor.rain_amount"
+    },
+    {
+      "class": "abilities.sensor.steering_wheel_angle",
+      "capabilityId": "sensor.steering_wheel_angle"
+    },
+    {
+      "class": "abilities.sensor.steering_wheel_speed",
+      "capabilityId": "sensor.steering_wheel_speed"
+    },
+    {
+      "class": "abilities.setting.ambient_light_area_brightness",
+      "capabilityId": "setting.ambient_light_area_brightness"
+    },
+    {
+      "class": "abilities.setting.ambient_light_brightness",
+      "capabilityId": "setting.ambient_light_brightness"
+    },
+    {
+      "class": "abilities.setting.ambient_light_power",
+      "capabilityId": "setting.ambient_light_power"
+    },
+    {
+      "class": "abilities.setting.anti_motion",
+      "capabilityId": "setting.anti_motion"
+    },
+    {
+      "class": "abilities.setting.camping_leveling",
+      "capabilityId": "setting.camping_leveling"
+    },
+    {
+      "class": "abilities.setting.comfort_mode",
+      "capabilityId": "setting.comfort_mode"
+    },
+    {
+      "class": "abilities.setting.cruise_prompt",
+      "capabilityId": "setting.cruise_prompt"
+    },
+    {
+      "class": "abilities.setting.etc_power",
+      "capabilityId": "setting.etc_power"
+    },
+    {
+      "class": "abilities.setting.headlamp_height",
+      "capabilityId": "setting.headlamp_height"
+    },
+    {
+      "class": "abilities.setting.hud_brightness",
+      "capabilityId": "setting.hud_brightness"
+    },
+    {
+      "class": "abilities.setting.hud_power",
+      "capabilityId": "setting.hud_power"
+    },
+    {
+      "class": "abilities.setting.mirror_auto_brightness",
+      "capabilityId": "setting.mirror_auto_brightness"
+    },
+    {
+      "class": "abilities.setting.mirror_auto_fold",
+      "capabilityId": "setting.mirror_auto_fold"
+    },
+    {
+      "class": "abilities.setting.mirror_brightness",
+      "capabilityId": "setting.mirror_brightness"
+    },
+    {
+      "class": "abilities.setting.mirror_fold_command",
+      "capabilityId": "setting.mirror_fold_command"
+    },
+    {
+      "class": "abilities.setting.mirror_follow_up",
+      "capabilityId": "setting.mirror_follow_up"
+    },
+    {
+      "class": "abilities.setting.mirror_reverse_tilt",
+      "capabilityId": "setting.mirror_reverse_tilt"
+    },
+    {
+      "class": "abilities.setting.rear_entertainment_screen",
+      "capabilityId": "setting.rear_entertainment_screen"
+    },
+    {
+      "class": "abilities.setting.road_preview",
+      "capabilityId": "setting.road_preview"
+    },
+    {
+      "class": "abilities.setting.rollover_airbag_suppression",
+      "capabilityId": "setting.rollover_airbag_suppression"
+    },
+    {
+      "class": "abilities.setting.sand_abs",
+      "capabilityId": "setting.sand_abs"
+    },
+    {
+      "class": "abilities.setting.seat_heating",
+      "capabilityId": "setting.seat_heating"
+    },
+    {
+      "class": "abilities.setting.seat_heating_off",
+      "capabilityId": "setting.seat_heating_off"
+    },
+    {
+      "class": "abilities.setting.seat_massage_level",
+      "capabilityId": "setting.seat_massage_level"
+    },
+    {
+      "class": "abilities.setting.seat_massage_mode",
+      "capabilityId": "setting.seat_massage_mode"
+    },
+    {
+      "class": "abilities.setting.seat_memory_save",
+      "capabilityId": "setting.seat_memory_save"
+    },
+    {
+      "class": "abilities.setting.seat_position",
+      "capabilityId": "setting.seat_position"
+    },
+    {
+      "class": "abilities.setting.seat_ventilation",
+      "capabilityId": "setting.seat_ventilation"
+    },
+    {
+      "class": "abilities.setting.seat_ventilation_off",
+      "capabilityId": "setting.seat_ventilation_off"
+    },
+    {
+      "class": "abilities.setting.soc_target",
+      "capabilityId": "setting.soc_target"
+    },
+    {
+      "class": "abilities.setting.steering_assist_mode",
+      "capabilityId": "setting.steering_assist_mode"
+    },
+    {
+      "class": "abilities.setting.steering_wheel_heating",
+      "capabilityId": "setting.steering_wheel_heating"
+    },
+    {
+      "class": "abilities.setting.steering_wheel_heating_level",
+      "capabilityId": "setting.steering_wheel_heating_level"
+    },
+    {
+      "class": "abilities.setting.suspension_extreme_height",
+      "capabilityId": "setting.suspension_extreme_height"
+    },
+    {
+      "class": "abilities.setting.suspension_height_command",
+      "capabilityId": "setting.suspension_height_command"
+    },
+    {
+      "class": "abilities.setting.suspension_height_lock",
+      "capabilityId": "setting.suspension_height_lock"
+    },
+    {
+      "class": "abilities.setting.suspension_mode",
+      "capabilityId": "setting.suspension_mode"
+    },
+    {
+      "class": "abilities.setting.vector_control",
+      "capabilityId": "setting.vector_control"
+    },
+    {
+      "class": "abilities.shortcut_audio.master_mute",
+      "capabilityId": "shortcut_audio.master_mute"
+    },
+    {
+      "class": "abilities.shortcut_audio.master_volume",
+      "capabilityId": "shortcut_audio.master_volume"
+    },
+    {
+      "class": "abilities.shortcut_audio.navigation_mute",
+      "capabilityId": "shortcut_audio.navigation_mute"
+    },
+    {
+      "class": "abilities.shortcut_audio.navigation_volume",
+      "capabilityId": "shortcut_audio.navigation_volume"
+    },
+    {
+      "class": "abilities.shortcut_charging.discharge",
+      "capabilityId": "shortcut_charging.discharge"
+    },
+    {
+      "class": "abilities.shortcut_charging.wireless",
+      "capabilityId": "shortcut_charging.wireless"
+    },
+    {
+      "class": "abilities.shortcut_gearbox.auto_mode",
+      "capabilityId": "shortcut_gearbox.auto_mode"
+    },
+    {
+      "class": "abilities.shortcut_gearbox.epb",
+      "capabilityId": "shortcut_gearbox.epb"
+    },
+    {
+      "class": "abilities.shortcut_gearbox.legacy_daylight",
+      "capabilityId": "shortcut_gearbox.legacy_daylight"
+    },
+    {
+      "class": "abilities.shortcut_gearbox.manual_mode",
+      "capabilityId": "shortcut_gearbox.manual_mode"
+    },
+    {
+      "class": "abilities.shortcut_gearbox.park_switch",
+      "capabilityId": "shortcut_gearbox.park_switch"
+    },
+    {
+      "class": "abilities.shortcut_gearbox.type",
+      "capabilityId": "shortcut_gearbox.type"
+    },
+    {
+      "class": "abilities.shortcut_wiper.front_speed",
+      "capabilityId": "shortcut_wiper.front_speed"
+    },
+    {
+      "class": "abilities.shortcut_wiper_gear.front_gear",
+      "capabilityId": "shortcut_wiper_gear.front_gear"
+    },
+    {
+      "class": "abilities.statistic.battery_capacity",
+      "capabilityId": "statistic.battery_capacity"
+    },
+    {
+      "class": "abilities.statistic.battery_health",
+      "capabilityId": "statistic.battery_health"
+    },
+    {
+      "class": "abilities.statistic.battery_soc",
+      "capabilityId": "statistic.battery_soc"
+    },
+    {
+      "class": "abilities.statistic.battery_temperature",
+      "capabilityId": "statistic.battery_temperature"
+    },
+    {
+      "class": "abilities.statistic.battery_voltage",
+      "capabilityId": "statistic.battery_voltage"
+    },
+    {
+      "class": "abilities.statistic.coolant_temperature",
+      "capabilityId": "statistic.coolant_temperature"
+    },
+    {
+      "class": "abilities.statistic.electric_consumption_last_200m",
+      "capabilityId": "statistic.electric_consumption_last_200m"
+    },
+    {
+      "class": "abilities.statistic.electric_consumption_per_100km",
+      "capabilityId": "statistic.electric_consumption_per_100km"
+    },
+    {
+      "class": "abilities.statistic.electric_range",
+      "capabilityId": "statistic.electric_range"
+    },
+    {
+      "class": "abilities.statistic.fuel_consumption_last_200m",
+      "capabilityId": "statistic.fuel_consumption_last_200m"
+    },
+    {
+      "class": "abilities.statistic.fuel_percent",
+      "capabilityId": "statistic.fuel_percent"
+    },
+    {
+      "class": "abilities.statistic.fuel_range",
+      "capabilityId": "statistic.fuel_range"
+    },
+    {
+      "class": "abilities.statistic.low_voltage_battery_voltage",
+      "capabilityId": "statistic.low_voltage_battery_voltage"
+    },
+    {
+      "class": "abilities.statistic.total_electric_consumption",
+      "capabilityId": "statistic.total_electric_consumption"
+    },
+    {
+      "class": "abilities.statistic.total_fuel_consumption",
+      "capabilityId": "statistic.total_fuel_consumption"
+    },
+    {
+      "class": "abilities.statistic.total_mileage",
+      "capabilityId": "statistic.total_mileage"
+    },
+    {
+      "class": "abilities.tyre.pressure",
+      "capabilityId": "tyre.pressure"
+    },
+    {
+      "class": "abilities.vehicle.accelerator_depth",
+      "capabilityId": "vehicle.accelerator_depth"
+    },
+    {
+      "class": "abilities.vehicle.brake_pedal_depth",
+      "capabilityId": "vehicle.brake_pedal_depth"
+    },
+    {
+      "class": "abilities.vehicle.longitudinal_acceleration",
+      "capabilityId": "vehicle.longitudinal_acceleration"
+    },
+    {
+      "class": "abilities.vehicle.speed",
+      "capabilityId": "vehicle.speed"
+    },
+    {
+      "class": "abilities.wiper.automatic",
+      "capabilityId": "wiper.automatic"
+    },
+    {
+      "class": "abilities.wiper.front_wiper_level",
+      "capabilityId": "wiper.front_wiper_level"
+    },
+    {
+      "class": "abilities.wiper.relay_state",
+      "capabilityId": "wiper.relay_state"
+    },
+    {
+      "class": "abilities.wiper.reset_state",
+      "capabilityId": "wiper.reset_state"
+    },
+    {
+      "class": "abilities.wiper.sensitivity",
+      "capabilityId": "wiper.sensitivity"
+    },
+    {
+      "class": "abilities.wiper.service_mode",
+      "capabilityId": "wiper.service_mode"
+    }
+  ]
+}
